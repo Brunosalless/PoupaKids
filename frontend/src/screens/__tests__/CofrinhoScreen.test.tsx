@@ -16,9 +16,10 @@ jest.mock('@services/index', () => ({
 }));
 
 describe('CofrinhoScreen', () => {
-  it('exibe saldo e botão de depósito', () => {
-    const { getByText, getByTestId } = render(<CofrinhoScreen />);
-    expect(getByText(/Meu cofrinho/i)).toBeTruthy();
+  it('exibe título com emoji e botão de depósito', () => {
+    const { getAllByText, getByTestId } = render(<CofrinhoScreen />);
+    // O título e o label do SaldoCard compartilham a palavra "Cofrinho".
+    expect(getAllByText(/cofrinho/i).length).toBeGreaterThan(0);
     expect(getByTestId('btn-depositar')).toBeTruthy();
   });
 

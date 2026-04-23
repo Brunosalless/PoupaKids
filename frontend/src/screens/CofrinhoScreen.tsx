@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, Modal, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Card, SaldoCard, TransactionForm } from '@components/index';
+import { Button, SaldoCard, TransactionForm } from '@components/index';
 import { useFinance } from '@store/FinanceContext';
 import { transacoesService, extractApiMessage } from '@services/index';
 import type { TipoTransacao } from '../types';
@@ -28,9 +28,9 @@ export function CofrinhoScreen(): JSX.Element {
       });
       await refreshSaldo();
       setModalTipo(null);
-      Alert.alert('Sucesso!', 'Operação registrada no cofrinho. 🎉');
+      Alert.alert('Tudo certo! 🎉', 'Sua operação foi registrada no cofrinho. Continue assim! 💪');
     } catch (e) {
-      Alert.alert('Não foi possível', extractApiMessage(e));
+      Alert.alert('Não deu certo 😅', extractApiMessage(e));
     } finally {
       setLoading(false);
     }
@@ -39,22 +39,57 @@ export function CofrinhoScreen(): JSX.Element {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <Text className="text-2xl font-bold text-text mb-4">Meu cofrinho</Text>
+        <View className="items-center mb-4">
+          <Text className="text-3xl font-extrabold text-primary">Meu Cofrinho 🐷</Text>
+          <Text className="text-sm text-text-muted mt-1">
+            Cuidar do dinheiro é coisa de gente esperta!
+          </Text>
+        </View>
 
         <SaldoCard saldo={saldo} />
 
-        <Card style={{ marginTop: 16 }}>
-          <Text className="text-sm text-text-muted mb-3">O que você quer fazer?</Text>
-          <View className="gap-3">
-            <Button title="Depositar 💰" onPress={() => setModalTipo('Deposito')} testID="btn-depositar" />
-            <Button title="Sacar 💸" variant="secondary" onPress={() => setModalTipo('Saque')} />
-            <Button title="Transferir 🔁" variant="ghost" onPress={() => setModalTipo('Transferencia')} />
-          </View>
-        </Card>
+        <Text className="text-lg font-extrabold text-text mt-6 mb-3">O que você quer fazer?</Text>
 
-        <Modal visible={!!modalTipo} animationType="slide" transparent onRequestClose={() => setModalTipo(null)}>
-          <View className="flex-1 justify-end bg-black/40">
-            <View className="bg-surface rounded-t-3xl p-6">
+        <View className="gap-3">
+          <Button
+            title="💰  Depositar"
+            variant="secondary"
+            size="xl"
+            onPress={() => setModalTipo('Deposito')}
+            testID="btn-depositar"
+          />
+          <Button
+            title="💸  Sacar"
+            variant="accent"
+            size="xl"
+            onPress={() => setModalTipo('Saque')}
+          />
+          <Button
+            title="🔁  Transferir"
+            variant="cyan"
+            size="xl"
+            onPress={() => setModalTipo('Transferencia')}
+          />
+        </View>
+
+        <View className="bg-primary-light/30 rounded-3xl p-4 mt-6 flex-row items-center">
+          <Text style={{ fontSize: 30 }} className="mr-3">🌟</Text>
+          <Text className="text-sm text-text flex-1 leading-5">
+            Cada moedinha que você guarda te deixa mais perto dos seus sonhos!
+          </Text>
+        </View>
+
+        <Modal
+          visible={!!modalTipo}
+          animationType="slide"
+          transparent
+          onRequestClose={() => setModalTipo(null)}
+        >
+          <View className="flex-1 justify-end bg-black/50">
+            <View className="bg-surface rounded-t-[36px] p-6">
+              <View className="items-center mb-2">
+                <View className="w-12 h-1.5 bg-primary-light rounded-full" />
+              </View>
               {modalTipo && (
                 <TransactionForm tipo={modalTipo} loading={loading} onSubmit={submit} />
               )}

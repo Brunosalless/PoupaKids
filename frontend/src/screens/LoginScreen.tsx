@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Alert, ScrollView, Switch, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -38,7 +38,7 @@ export function LoginScreen(): JSX.Element {
     try {
       await login(values.email, values.senha, isResponsavel ? 'responsavel' : 'usuario');
     } catch (e) {
-      Alert.alert('Erro ao entrar', extractApiMessage(e));
+      Alert.alert('Oops! 😅', extractApiMessage(e));
     } finally {
       setLoading(false);
     }
@@ -47,18 +47,29 @@ export function LoginScreen(): JSX.Element {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 24 }}>
-        <Text style={{ fontSize: 60, textAlign: 'center' }}>🐷</Text>
-        <Text className="text-3xl font-bold text-primary text-center mb-2">PoupaKids</Text>
-        <Text className="text-sm text-text-muted text-center mb-8">
-          Bem-vindo de volta!
-        </Text>
+        <View className="items-center mb-8">
+          <View
+            className="w-32 h-32 rounded-full bg-primary items-center justify-center mb-3"
+            style={{
+              shadowColor: '#7C3AED',
+              shadowOpacity: 0.4,
+              shadowRadius: 18,
+              shadowOffset: { width: 0, height: 8 },
+              elevation: 10,
+            }}
+          >
+            <Text style={{ fontSize: 72 }}>🐷</Text>
+          </View>
+          <Text className="text-4xl font-extrabold text-primary">PoupaKids</Text>
+          <Text className="text-base text-text-muted mt-1">Olá de novo, amiguinho! 👋</Text>
+        </View>
 
         <Controller
           control={control}
           name="email"
           render={({ field: { onChange, value, onBlur } }) => (
             <Input
-              label="E-mail"
+              label="✉️  E-mail"
               autoCapitalize="none"
               keyboardType="email-address"
               value={value}
@@ -76,35 +87,47 @@ export function LoginScreen(): JSX.Element {
           name="senha"
           render={({ field: { onChange, value, onBlur } }) => (
             <Input
-              label="Senha"
+              label="🔒  Senha"
               secureTextEntry
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
-              placeholder="Sua senha"
+              placeholder="Sua senha secreta"
               error={errors.senha?.message}
               testID="input-senha"
             />
           )}
         />
 
-        <View className="flex-row items-center justify-between mb-6">
-          <Text className="text-sm text-text">Sou responsável</Text>
-          <Switch
-            value={isResponsavel}
-            onValueChange={setIsResponsavel}
-            accessibilityLabel="Alternar entre criança e responsável"
-          />
-        </View>
+        <Pressable
+          onPress={() => setIsResponsavel((v) => !v)}
+          className={`flex-row items-center justify-between rounded-2xl p-4 mb-4 border-2 ${
+            isResponsavel ? 'border-primary bg-primary-light/20' : 'border-primary-light bg-surface'
+          }`}
+          accessibilityRole="switch"
+          accessibilityState={{ checked: isResponsavel }}
+        >
+          <Text className="text-base font-semibold text-text">
+            {isResponsavel ? '👨‍👩‍👧 Sou responsável' : '🧒 Sou criança'}
+          </Text>
+          <Text className="text-xs text-primary font-bold">tocar para trocar</Text>
+        </Pressable>
 
-        <Button title="Entrar" onPress={onSubmit} loading={loading} testID="btn-login" />
+        <Button
+          title="Entrar 🚀"
+          onPress={onSubmit}
+          loading={loading}
+          size="lg"
+          testID="btn-login"
+        />
 
-        <View className="items-center mt-6">
-          <Text className="text-sm text-text-muted">Ainda não tem conta?</Text>
+        <View className="items-center mt-8">
+          <Text className="text-sm text-text-muted mb-2">Primeira vez por aqui?</Text>
           <Button
-            title="Criar conta"
-            variant="ghost"
+            title="Criar minha conta 🎉"
+            variant="accent"
             onPress={() => navigation.navigate('Register')}
+            size="md"
           />
         </View>
       </ScrollView>

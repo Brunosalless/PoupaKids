@@ -16,6 +16,7 @@
     "frontend:start": "npm --workspace frontend run start",
     "frontend:android": "npm --workspace frontend run android",
     "frontend:ios": "npm --workspace frontend run ios",
+    "frontend:web": "npm --workspace frontend run web",
     "frontend:test": "npm --workspace frontend run test",
     "lint": "npm run lint --workspaces --if-present",
     "test": "npm run test --workspaces --if-present"

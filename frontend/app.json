@@ -1,4 +1,30 @@
 {
-  "name": "PoupaKids",
-  "displayName": "PoupaKids"
+  "expo": {
+    "name": "PoupaKids",
+    "slug": "poupakids",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "poupakids",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#F8FAFC"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.poupakids.app"
+    },
+    "android": {
+      "package": "com.poupakids.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#2E75B6"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": []
+  }
 }

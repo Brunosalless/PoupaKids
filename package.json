@@ -26,5 +26,9 @@
     "npm": ">=10.0.0"
   },
   "author": "Equipe PoupaKids - PI 5º período",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "react-native-worklets": "^0.7.4",
+    "semver": "^7.7.4"
+  }
 }

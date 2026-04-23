@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(npm --workspace backend run db:seed)",
+      "Bash(npm --workspace backend run start)",
+      "Bash(curl -s -X POST http://localhost:3000/api/auth/register -H \"Content-Type: application/json\" -d '{\"tipo\":\"usuario\",\"nome\":\"Adulto Teste\",\"email\":\"adulto@ex.com\",\"senha\":\"senha123\",\"data_nascimento\":\"1999-01-01\",\"id_responsavel\":1}')",
+      "Bash(node -e \"let d=''; process.stdin.on\\('data',x=>d+=x\\).on\\('end',\\(\\)=>console.log\\(JSON.stringify\\(JSON.parse\\(d\\),null,2\\)\\)\\)\")",
+      "Bash(curl -s -X POST http://localhost:3000/api/auth/register -H \"Content-Type: application/json\" -d '{\"tipo\":\"usuario\",\"nome\":\"Outro\",\"email\":\"joaozinho@poupakids.com\",\"senha\":\"senha123\",\"data_nascimento\":\"2016-01-01\",\"id_responsavel\":1}')",
+      "Bash(curl -s -X POST http://localhost:3000/api/auth/login -H \"Content-Type: application/json\" -d '{\"email\":\"joaozinho@poupakids.com\",\"senha\":\"Kids@123\",\"tipo\":\"usuario\"}')",
+      "Bash(taskkill //F //IM node.exe //T)",
+      "Bash(npm --workspace frontend run test)",
+      "Bash(npm --workspace frontend install --save-dev react-native-worklets --no-audit --no-fund)",
+      "Bash(npm --workspace frontend install --save-dev react-native-worklets --legacy-peer-deps --no-audit --no-fund)",
+      "Bash(npm --workspace frontend install --save --legacy-peer-deps --no-audit --no-fund 'expo@~50.0.17' 'react-native-web@~0.19.10' '@expo/metro-runtime@~3.1.3' react-dom@18.2.0)",
+      "Bash(npm --workspace frontend install --save-dev --legacy-peer-deps --no-audit --no-fund 'babel-preset-expo@~10.0.2')",
+      "Bash(npx expo *)",
+      "Bash(rm -rf \"D:/usuarios/bruno/Área de Trabalho/Faculdade/1.Projeto Integrativo/5° periodo/PoupaKids/node_modules/react-native-css-interop/.cache\")",
+      "Bash(CI=1 BROWSER=none npx expo start --web --port 19006 --non-interactive)",
+      "Bash(curl -s http://localhost:19006/)",
+      "Bash(curl -s \"http://localhost:19006/index.bundle?platform=web&dev=true&hot=false\" -o /tmp/bundle.js -w \"HTTP=%{http_code} bytes=%{size_download}\\\\n\" -m 300)",
+      "Read(//tmp/**)"
+    ]
+  }
+}

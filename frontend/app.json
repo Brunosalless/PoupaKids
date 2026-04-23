@@ -4,11 +4,10 @@
     "slug": "poupakids",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "scheme": "poupakids",
     "userInterfaceStyle": "light",
     "splash": {
-      "backgroundColor": "#F8FAFC"
+      "backgroundColor": "#FAF5FF"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
@@ -18,12 +17,11 @@
     "android": {
       "package": "com.poupakids.app",
       "adaptiveIcon": {
-        "backgroundColor": "#2E75B6"
+        "backgroundColor": "#7C3AED"
       }
     },
     "web": {
-      "bundler": "metro",
-      "favicon": "./assets/favicon.png"
+      "bundler": "metro"
     },
     "plugins": []
   }

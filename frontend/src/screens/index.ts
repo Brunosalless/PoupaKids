@@ -1,0 +1,9 @@
+export { SplashScreen } from './SplashScreen';
+export { LoginScreen } from './LoginScreen';
+export { RegisterScreen } from './RegisterScreen';
+export { HomeScreen } from './HomeScreen';
+export { CofrinhoScreen } from './CofrinhoScreen';
+export { MetasScreen } from './MetasScreen';
+export { ConquistasScreen } from './ConquistasScreen';
+export { HistoricoScreen } from './HistoricoScreen';
+export { PainelResponsavelScreen } from './PainelResponsavelScreen';

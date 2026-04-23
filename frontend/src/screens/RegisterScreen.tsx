@@ -2,45 +2,63 @@ import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Alert, ScrollView, Switch, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Input } from '@components/index';
+import { Button, Input, MaskedInput } from '@components/index';
 import { useAuth } from '@store/AuthContext';
 import { extractApiMessage } from '@services/api';
 import { validateAge } from '@utils/validateAge';
+import {
+  brDateToISO,
+  isValidBRDate,
+  isValidCPF,
+  isValidPhone,
+  onlyDigits,
+} from '@utils/masks';
 
-const baseSchema = z.object({
+const baseShape = {
   nome: z.string().min(2, 'Nome muito curto'),
   email: z.string().email('E-mail inválido'),
-  senha: z.string().min(6, 'Senha deve ter ao menos 6 caracteres'),
-});
+  senha: z.string().min(6, 'Senha precisa de pelo menos 6 letras'),
+};
 
-const criancaSchema = baseSchema.extend({
+const criancaSchema = z.object({
+  ...baseShape,
   data_nascimento: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Use o formato AAAA-MM-DD')
-    .refine((v) => validateAge(v), {
+    .refine(isValidBRDate, { message: 'Data inválida (use DD/MM/AAAA)' })
+    .refine((v) => validateAge(brDateToISO(v)), {
       message: 'Crianças devem ter menos de 18 anos',
     }),
-  id_responsavel: z.string().min(1, 'Informe o ID do responsável'),
+  id_responsavel: z
+    .string()
+    .refine((v) => Number(v) > 0, { message: 'Informe o ID do responsável' }),
 });
 
-const responsavelSchema = baseSchema.extend({
-  cpf: z.string().min(11, 'CPF inválido'),
-  telefone: z.string().optional(),
+const responsavelSchema = z.object({
+  ...baseShape,
+  cpf: z.string().refine(isValidCPF, { message: 'CPF inválido' }),
+  telefone: z
+    .string()
+    .optional()
+    .refine((v) => !v || isValidPhone(v), { message: 'Telefone inválido' }),
 });
+
+type Tipo = 'usuario' | 'responsavel';
 
 export function RegisterScreen(): JSX.Element {
   const { register } = useAuth();
-  const [tipo, setTipo] = useState<'usuario' | 'responsavel'>('usuario');
+  const [tipo, setTipo] = useState<Tipo>('usuario');
   const [loading, setLoading] = useState(false);
+
   const schema = tipo === 'usuario' ? criancaSchema : responsavelSchema;
 
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
-  } = useForm<z.infer<typeof criancaSchema> & z.infer<typeof responsavelSchema>>({
+  } = useForm({
     resolver: zodResolver(schema as z.ZodTypeAny),
     defaultValues: {
       nome: '',
@@ -53,7 +71,12 @@ export function RegisterScreen(): JSX.Element {
     },
   });
 
-  const onSubmit = handleSubmit(async (values) => {
+  const trocarTipo = (t: Tipo) => {
+    setTipo(t);
+    reset();
+  };
+
+  const onSubmit = handleSubmit(async (values: any) => {
     setLoading(true);
     try {
       const payload =
@@ -63,7 +86,7 @@ export function RegisterScreen(): JSX.Element {
               nome: values.nome,
               email: values.email,
               senha: values.senha,
-              data_nascimento: values.data_nascimento,
+              data_nascimento: brDateToISO(values.data_nascimento),
               id_responsavel: Number(values.id_responsavel),
             }
           : {
@@ -71,12 +94,12 @@ export function RegisterScreen(): JSX.Element {
               nome: values.nome,
               email: values.email,
               senha: values.senha,
-              cpf: values.cpf,
-              telefone: values.telefone,
+              cpf: onlyDigits(values.cpf),
+              telefone: values.telefone ? onlyDigits(values.telefone) : undefined,
             };
-      await register(payload);
+      await register(payload as any);
     } catch (e) {
-      Alert.alert('Erro ao cadastrar', extractApiMessage(e));
+      Alert.alert('Não deu desta vez 😅', extractApiMessage(e));
     } finally {
       setLoading(false);
     }
@@ -85,21 +108,45 @@ export function RegisterScreen(): JSX.Element {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <ScrollView contentContainerStyle={{ padding: 24 }}>
-        <Text className="text-2xl font-bold text-text mb-4">Criar conta</Text>
+        <View className="items-center mb-6">
+          <Text style={{ fontSize: 60 }}>{tipo === 'usuario' ? '🧒' : '👨‍👩‍👧'}</Text>
+          <Text className="text-3xl font-extrabold text-primary mt-2">Criar conta</Text>
+          <Text className="text-sm text-text-muted mt-1">
+            Vamos começar sua aventura de poupar! 💰
+          </Text>
+        </View>
 
-        <View className="flex-row items-center justify-between mb-4">
-          <Text className="text-sm text-text">Sou responsável</Text>
-          <Switch
-            value={tipo === 'responsavel'}
-            onValueChange={(v) => setTipo(v ? 'responsavel' : 'usuario')}
-          />
+        <View className="flex-row mb-5 bg-primary-light/20 rounded-full p-1">
+          <Pressable
+            onPress={() => trocarTipo('usuario')}
+            className={`flex-1 py-3 rounded-full items-center ${tipo === 'usuario' ? 'bg-primary' : ''}`}
+          >
+            <Text className={`font-bold ${tipo === 'usuario' ? 'text-white' : 'text-primary'}`}>
+              🧒 Sou criança
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => trocarTipo('responsavel')}
+            className={`flex-1 py-3 rounded-full items-center ${tipo === 'responsavel' ? 'bg-primary' : ''}`}
+          >
+            <Text className={`font-bold ${tipo === 'responsavel' ? 'text-white' : 'text-primary'}`}>
+              👨‍👩‍👧 Sou responsável
+            </Text>
+          </Pressable>
         </View>
 
         <Controller
           control={control}
           name="nome"
           render={({ field: { onChange, value, onBlur } }) => (
-            <Input label="Nome completo" value={value} onChangeText={onChange} onBlur={onBlur} error={errors.nome?.message} />
+            <Input
+              label="😃  Nome completo"
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              placeholder="Como te chamam?"
+              error={errors.nome?.message as string}
+            />
           )}
         />
 
@@ -107,7 +154,16 @@ export function RegisterScreen(): JSX.Element {
           control={control}
           name="email"
           render={({ field: { onChange, value, onBlur } }) => (
-            <Input label="E-mail" autoCapitalize="none" keyboardType="email-address" value={value} onChangeText={onChange} onBlur={onBlur} error={errors.email?.message} />
+            <Input
+              label="✉️  E-mail"
+              autoCapitalize="none"
+              keyboardType="email-address"
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              placeholder="voce@exemplo.com"
+              error={errors.email?.message as string}
+            />
           )}
         />
 
@@ -115,7 +171,15 @@ export function RegisterScreen(): JSX.Element {
           control={control}
           name="senha"
           render={({ field: { onChange, value, onBlur } }) => (
-            <Input label="Senha" secureTextEntry value={value} onChangeText={onChange} onBlur={onBlur} error={errors.senha?.message} />
+            <Input
+              label="🔒  Senha secreta"
+              secureTextEntry
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              placeholder="Pelo menos 6 letrinhas"
+              error={errors.senha?.message as string}
+            />
           )}
         />
 
@@ -125,16 +189,36 @@ export function RegisterScreen(): JSX.Element {
               control={control}
               name="data_nascimento"
               render={({ field: { onChange, value, onBlur } }) => (
-                <Input label="Data de nascimento (AAAA-MM-DD)" value={value} onChangeText={onChange} onBlur={onBlur} placeholder="2016-05-10" error={errors.data_nascimento?.message} />
+                <MaskedInput
+                  mask="date"
+                  label="🎂  Data de nascimento"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={errors.data_nascimento?.message as string}
+                />
               )}
             />
             <Controller
               control={control}
               name="id_responsavel"
               render={({ field: { onChange, value, onBlur } }) => (
-                <Input label="ID do responsável" keyboardType="number-pad" value={value} onChangeText={onChange} onBlur={onBlur} error={errors.id_responsavel?.message} />
+                <Input
+                  label="👨‍👩‍👧  ID do responsável"
+                  keyboardType="number-pad"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder="Ex.: 1"
+                  error={errors.id_responsavel?.message as string}
+                />
               )}
             />
+            <View className="bg-accent-light rounded-2xl p-3 mb-4">
+              <Text className="text-xs text-text">
+                💡 Peça o ID ao seu responsável — é o número da conta dele(a) no PoupaKids.
+              </Text>
+            </View>
           </>
         ) : (
           <>
@@ -142,20 +226,36 @@ export function RegisterScreen(): JSX.Element {
               control={control}
               name="cpf"
               render={({ field: { onChange, value, onBlur } }) => (
-                <Input label="CPF" value={value} onChangeText={onChange} onBlur={onBlur} placeholder="000.000.000-00" error={errors.cpf?.message} />
+                <MaskedInput
+                  mask="cpf"
+                  label="🆔  CPF"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={errors.cpf?.message as string}
+                />
               )}
             />
             <Controller
               control={control}
               name="telefone"
               render={({ field: { onChange, value, onBlur } }) => (
-                <Input label="Telefone" keyboardType="phone-pad" value={value} onChangeText={onChange} onBlur={onBlur} />
+                <MaskedInput
+                  mask="phone"
+                  label="📱  Telefone (opcional)"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={errors.telefone?.message as string}
+                />
               )}
             />
           </>
         )}
 
-        <Button title="Cadastrar" onPress={onSubmit} loading={loading} />
+        <View className="mt-2">
+          <Button title="Criar minha conta 🎉" onPress={onSubmit} loading={loading} size="lg" />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

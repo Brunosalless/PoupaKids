@@ -1,0 +1,29 @@
+{
+  "name": "poupakids",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PoupaKids — aplicativo mobile de educação financeira gamificada para crianças de 6 a 12 anos.",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "backend:dev": "npm --workspace backend run dev",
+    "backend:start": "npm --workspace backend run start",
+    "backend:test": "npm --workspace backend run test",
+    "backend:migrate": "npm --workspace backend run db:migrate",
+    "backend:seed": "npm --workspace backend run db:seed",
+    "frontend:start": "npm --workspace frontend run start",
+    "frontend:android": "npm --workspace frontend run android",
+    "frontend:ios": "npm --workspace frontend run ios",
+    "frontend:test": "npm --workspace frontend run test",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "author": "Equipe PoupaKids - PI 5º período",
+  "license": "MIT"
+}

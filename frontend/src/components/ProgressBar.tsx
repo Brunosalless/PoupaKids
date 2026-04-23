@@ -11,19 +11,20 @@ interface ProgressBarProps {
   color?: string;
   trackColor?: string;
   height?: number;
+  showSparkle?: boolean;
 }
 
 export function ProgressBar({
   progress,
-  color = '#7ED957',
-  trackColor = '#E2E8F0',
-  height = 12,
+  color = '#22C55E',
+  trackColor = '#F3E8FF',
+  height = 16,
 }: ProgressBarProps): JSX.Element {
   const clamped = Math.max(0, Math.min(progress, 1));
   const width = useSharedValue(0);
 
   useEffect(() => {
-    width.value = withTiming(clamped, { duration: 600 });
+    width.value = withTiming(clamped, { duration: 700 });
   }, [clamped, width]);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -41,6 +42,8 @@ export function ProgressBar({
         borderRadius: height,
         overflow: 'hidden',
         width: '100%',
+        borderWidth: 2,
+        borderColor: '#E9D5FF',
       }}
     >
       <Animated.View style={[{ height: '100%', borderRadius: height }, animatedStyle]} />

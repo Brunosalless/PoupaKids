@@ -19,14 +19,18 @@ export function EmptyState({
 }: EmptyStateProps): JSX.Element {
   return (
     <View className="items-center justify-center py-12 px-6">
-      <Text style={{ fontSize: 64 }}>{icon}</Text>
-      <Text className="text-lg font-bold text-text mt-4 text-center">{title}</Text>
+      <View className="w-32 h-32 rounded-full bg-primary-light/30 items-center justify-center mb-4">
+        <Text style={{ fontSize: 72 }}>{icon}</Text>
+      </View>
+      <Text className="text-xl font-extrabold text-text mt-2 text-center">{title}</Text>
       {description ? (
-        <Text className="text-sm text-text-muted mt-2 text-center">{description}</Text>
+        <Text className="text-base text-text-muted mt-2 text-center leading-6">
+          {description}
+        </Text>
       ) : null}
       {ctaLabel && onCtaPress ? (
-        <View className="mt-4">
-          <Button title={ctaLabel} onPress={onCtaPress} />
+        <View className="mt-6 w-full max-w-xs">
+          <Button title={ctaLabel} onPress={onCtaPress} variant="primary" size="lg" />
         </View>
       ) : null}
     </View>

@@ -1,24 +1,34 @@
-'use strict';
+// Conexão única com o banco de dados (BancoKids), reaproveitada por todos os models.
+// MySQL é o banco oficial do projeto. SQLite pode ser usado para demonstração local
+// (DB_DIALECT=sqlite) ou testes automatizados (NODE_ENV=test → SQLite em memória).
+require('dotenv').config({ quiet: true });
+const { Sequelize } = require('sequelize');
 
-const path = require('path');
-const dotenv = require('dotenv');
+const isTest = process.env.NODE_ENV === 'test';
+const dialect = isTest ? 'sqlite' : (process.env.DB_DIALECT || 'mysql');
 
-dotenv.config({ path: path.resolve(__dirname, '..', '..', '.env') });
+let sequelize;
 
-const base = {
-  username: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'BancoKids',
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '3306', 10),
-  dialect: 'mysql',
-  dialectOptions: { charset: 'utf8mb4' },
-  define: { underscored: false, freezeTableName: true, timestamps: false },
-  logging: false,
-};
+if (dialect === 'sqlite') {
+  sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: isTest ? ':memory:' : (process.env.DB_STORAGE || './bancokids.sqlite'),
+    logging: false,
+  });
+} else {
+  sequelize = new Sequelize(
+    process.env.DB_NAME || 'BancoKids',
+    process.env.DB_USER || 'root',
+    process.env.DB_PASS || '',
+    {
+      host: process.env.DB_HOST || 'localhost',
+      port: Number(process.env.DB_PORT || 3306),
+      dialect: 'mysql',
+      logging: false,
+      timezone: '-03:00',
+      define: { charset: 'utf8mb4', collate: 'utf8mb4_unicode_ci' },
+    }
+  );
+}
 
-module.exports = {
-  development: base,
-  test: { ...base, database: `${base.database}_test` },
-  production: { ...base, logging: false },
-};
+module.exports = { sequelize, dialect };

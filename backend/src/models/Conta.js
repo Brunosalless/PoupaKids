@@ -1,40 +1,20 @@
-'use strict';
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/database');
 
-const { DataTypes, Model } = require('sequelize');
+const decimal = (campo) => ({
+  type: DataTypes.DECIMAL(10, 2),
+  allowNull: false,
+  defaultValue: 0,
+  get() { return Number(this.getDataValue(campo) || 0); },
+});
 
-module.exports = (sequelize) => {
-  class Conta extends Model {
-    static associate(models) {
-      Conta.belongsTo(models.Usuario, {
-        foreignKey: 'id_usuario',
-        as: 'usuario',
-      });
-      Conta.hasMany(models.Transacao, {
-        foreignKey: 'id_conta',
-        as: 'transacoes',
-      });
-    }
-  }
+// Tabela Contas — 1:1 com Usuarios. mesada_referencia (AAAA-MM) adicionada na Fase 02 (RN07).
+const Conta = sequelize.define('Conta', {
+  id_conta: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  id_usuario: { type: DataTypes.INTEGER, allowNull: false, unique: true },
+  saldo: { ...decimal('saldo'), validate: { min: 0 } },
+  limite_mesada: decimal('limite_mesada'),
+  mesada_referencia: { type: DataTypes.STRING(7) },
+}, { tableName: 'Contas', timestamps: false });
 
-  Conta.init(
-    {
-      id_conta: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
-      id_usuario: { type: DataTypes.INTEGER, allowNull: false, unique: true },
-      saldo: { type: DataTypes.DECIMAL(10, 2), defaultValue: 0 },
-      limite_mesada: { type: DataTypes.DECIMAL(10, 2), defaultValue: 0 },
-      created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-    },
-    {
-      sequelize,
-      modelName: 'Conta',
-      tableName: 'Contas',
-      timestamps: false,
-    },
-  );
-
-  return Conta;
-};
+module.exports = Conta;

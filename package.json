@@ -1,34 +1,17 @@
 {
   "name": "poupakids",
-  "version": "1.0.0",
+  "version": "2.1.0",
   "private": true,
-  "description": "PoupaKids — aplicativo mobile de educação financeira gamificada para crianças de 6 a 12 anos.",
-  "workspaces": [
-    "backend",
-    "frontend"
-  ],
+  "description": "PoupaKids — educação financeira infantil gamificada (Projeto Integrador UniEVANGÉLICA)",
   "scripts": {
-    "backend:dev": "npm --workspace backend run dev",
-    "backend:start": "npm --workspace backend run start",
-    "backend:test": "npm --workspace backend run test",
-    "backend:migrate": "npm --workspace backend run db:migrate",
-    "backend:seed": "npm --workspace backend run db:seed",
-    "frontend:start": "npm --workspace frontend run start",
-    "frontend:android": "npm --workspace frontend run android",
-    "frontend:ios": "npm --workspace frontend run ios",
-    "frontend:web": "npm --workspace frontend run web",
-    "frontend:test": "npm --workspace frontend run test",
-    "lint": "npm run lint --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present"
-  },
-  "engines": {
-    "node": ">=20.0.0",
-    "npm": ">=10.0.0"
-  },
-  "author": "Equipe PoupaKids - PI 5º período",
-  "license": "MIT",
-  "devDependencies": {
-    "react-native-worklets": "^0.7.4",
-    "semver": "^7.7.4"
+    "instalar": "npm --prefix backend install && npm --prefix frontend install",
+    "seed": "npm --prefix backend run seed",
+    "dev:api": "npm --prefix backend run dev",
+    "dev:web": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "start": "npm run build && npm --prefix backend start",
+    "test": "npm --prefix backend test",
+    "demo": "npm run build && npm --prefix backend run demo",
+    "demo:reset": "npm run build && npm --prefix backend run demo:reset"
   }
 }

@@ -1,0 +1,13 @@
+# Sobe o MySQL 8 com a base BancoKids para rodar a API no banco oficial do projeto.
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: poupakids
+      MYSQL_DATABASE: BancoKids
+    ports:
+      - "3306:3306"
+    volumes:
+      - bancokids:/var/lib/mysql
+volumes:
+  bancokids:

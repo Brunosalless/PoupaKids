@@ -1,39 +1,28 @@
-'use strict';
-
+// Aplicação Express: middlewares globais, rotas /api e, em produção,
+// os arquivos estáticos do frontend (frontend/dist) servidos na mesma origem.
+const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-
-const env = require('./config/env');
 const routes = require('./routes');
-const notFound = require('./middlewares/notFound');
-const errorHandler = require('./middlewares/errorHandler');
+const { errorHandler, naoEncontrado } = require('./middlewares/errorHandler');
 
 const app = express();
 
-app.use(helmet());
-app.use(
-  cors({
-    origin: (origin, cb) => {
-      if (!origin) return cb(null, true);
-      if (env.corsOrigins.includes(origin) || env.corsOrigins.includes('*')) {
-        return cb(null, true);
-      }
-      return cb(new Error('CORS: origem não permitida'));
-    },
-  }),
-);
-app.use(express.json({ limit: '1mb' }));
-app.use(express.urlencoded({ extended: true }));
-
-if (env.nodeEnv !== 'test') {
-  app.use(morgan('dev'));
-}
+const origens = (process.env.CORS_ORIGIN || 'http://localhost:5173').split(',').map((s) => s.trim());
+app.use(cors({ origin: origens, allowedHeaders: ['Content-Type', 'Authorization'] }));
+app.use(express.json({ limit: '100kb' }));
+app.disable('x-powered-by');
 
 app.use('/api', routes);
+app.use('/api', naoEncontrado);
 
-app.use(notFound);
+const dist = path.resolve(__dirname, '../../frontend/dist');
+if (fs.existsSync(dist)) {
+  app.use(express.static(dist));
+  app.get('*', (_req, res) => res.sendFile(path.join(dist, 'index.html')));
+}
+
 app.use(errorHandler);
 
 module.exports = app;

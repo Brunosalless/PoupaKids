@@ -1,0 +1,23 @@
+// 20 conteúdos de educação financeira (dados de teste definidos na Fase 0).
+module.exports = [
+  ['O que é dinheiro?', 'Dinheiro é o que usamos para trocar por coisas que precisamos ou queremos. Antes dele, as pessoas trocavam objetos entre si (escambo).', 'Iniciante'],
+  ['Necessidade ou desejo?', 'Necessidade é o que precisamos para viver bem (comida, escola). Desejo é algo legal de ter, mas que pode esperar. Antes de comprar, pergunte: eu preciso ou eu quero?', 'Iniciante'],
+  ['Para que serve um cofrinho?', 'Guardar um pouquinho de cada vez faz o dinheiro crescer. No PoupaKids, cada meta é um cofrinho com um objetivo.', 'Iniciante'],
+  ['Moedas e notas do Real', 'O Real tem moedas de 5, 10, 25 e 50 centavos e de 1 real, e notas de 2 a 200 reais. 100 centavos formam 1 real.', 'Iniciante'],
+  ['O que é mesada?', 'Mesada é um valor que você recebe todo mês. Ela é ótima para aprender a planejar: quanto gastar, quanto guardar.', 'Iniciante'],
+  ['A regra dos três potes', 'Divida o que você recebe em três potes: gastar, guardar e doar/compartilhar. Assim você aproveita hoje e também pensa no amanhã.', 'Iniciante'],
+  ['Esperar vale a pena', 'Quem espera um pouco para comprar costuma escolher melhor. Experimente esperar um dia antes de gastar com algo que não estava no plano.', 'Iniciante'],
+  ['Comparando preços', 'O mesmo produto pode ter preços diferentes em lugares diferentes. Comparar ajuda a sobrar dinheiro para outras coisas.', 'Intermediário'],
+  ['Criando uma meta', 'Uma boa meta tem nome, valor e prazo. Exemplo: "Bicicleta, R$ 300, em 6 meses". Assim fica fácil saber quanto guardar por mês.', 'Intermediário'],
+  ['Quanto guardar por mês?', 'Divida o valor da meta pelo número de meses. R$ 300 em 6 meses = R$ 50 por mês. Se a mesada for R$ 80, sobram R$ 30 para gastar.', 'Intermediário'],
+  ['O que é orçamento?', 'Orçamento é um plano que mostra quanto dinheiro entra e quanto sai. Ele ajuda a não gastar mais do que se tem.', 'Intermediário'],
+  ['Gastos pequenos somam', 'Um docinho de R$ 3 por dia parece pouco, mas em um mês são cerca de R$ 90! Prestar atenção nos pequenos gastos faz diferença.', 'Intermediário'],
+  ['Propaganda: fique esperto', 'Propagandas são feitas para despertar vontade de comprar. Pense se você realmente precisa daquilo antes de pedir.', 'Intermediário'],
+  ['Doar também é importante', 'Compartilhar parte do que temos ajuda outras pessoas e faz bem para quem doa. Pode ser dinheiro, brinquedos ou tempo.', 'Intermediário'],
+  ['O que é um banco?', 'Banco é um lugar que guarda o dinheiro das pessoas com segurança e também empresta dinheiro, cobrando por isso.', 'Avançado'],
+  ['O que são juros?', 'Juros são o "aluguel" do dinheiro. Quem empresta recebe juros; quem pega emprestado paga juros. Por isso, dívida custa caro.', 'Avançado'],
+  ['Poupança e rendimento', 'Quando o dinheiro fica guardado em uma aplicação, ele pode render um pouco a cada mês. Isso é o dinheiro trabalhando para você.', 'Avançado'],
+  ['O que é investir?', 'Investir é usar o dinheiro hoje esperando ter mais no futuro. Existem opções mais seguras e outras mais arriscadas.', 'Avançado'],
+  ['Inflação: o preço que sobe', 'Inflação é quando os preços sobem com o tempo. Por isso, R$ 10 hoje compram menos do que compravam alguns anos atrás.', 'Avançado'],
+  ['Planejando o futuro', 'Pequenas escolhas de hoje constroem grandes conquistas amanhã. Planejar, guardar e gastar com consciência é a base de uma vida financeira saudável.', 'Avançado'],
+].map(([titulo, descricao, nivel]) => ({ titulo, descricao, nivel, pontos: nivel === 'Iniciante' ? 10 : nivel === 'Intermediário' ? 15 : 20 }));

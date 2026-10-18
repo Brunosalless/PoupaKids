@@ -1,40 +1,27 @@
-'use strict';
-
-const ApiError = require('../utils/ApiError');
+// Tratamento centralizado de erros: AppError → status/mensagem de negócio;
+// erros do Sequelize → 422/409; demais → 500 sem vazar detalhes internos.
+const AppError = require('../utils/AppError');
 
 // eslint-disable-next-line no-unused-vars
-function errorHandler(err, req, res, next) {
-  if (err instanceof ApiError) {
-    return res.status(err.statusCode).json({
-      error: { code: err.code, message: err.message, details: err.details },
-    });
+function errorHandler(err, req, res, _next) {
+  if (err instanceof AppError) {
+    return res.status(err.status).json({ erro: err.message, codigo: err.codigo });
   }
-
-  if (err && err.name === 'SequelizeUniqueConstraintError') {
-    return res.status(409).json({
-      error: { code: 'CONFLICT', message: 'Registro duplicado', details: err.errors?.map((e) => e.message) },
-    });
+  if (err.type === 'entity.parse.failed') {
+    return res.status(400).json({ erro: 'JSON inválido no corpo da requisição.', codigo: 'VALIDACAO' });
   }
-
-  if (err && err.name === 'SequelizeDatabaseError') {
-    const msg = err.parent?.sqlMessage || err.message;
-    if (msg && msg.toLowerCase().includes('idade')) {
-      return res.status(400).json({
-        error: { code: 'VALIDATION_ERROR', message: 'Idade do usuário deve ser menor que 18' },
-      });
-    }
-    if (msg && msg.toLowerCase().includes('saldo')) {
-      return res.status(422).json({
-        error: { code: 'INSUFFICIENT_BALANCE', message: 'Saldo não pode ficar negativo' },
-      });
-    }
+  if (err.name === 'SequelizeUniqueConstraintError') {
+    return res.status(409).json({ erro: 'Registro duplicado.', codigo: 'DUPLICADO' });
   }
-
-  // eslint-disable-next-line no-console
-  console.error('[error]', err);
-  return res.status(500).json({
-    error: { code: 'INTERNAL_ERROR', message: 'Erro interno do servidor' },
-  });
+  if (err.name === 'SequelizeValidationError') {
+    return res.status(422).json({ erro: err.errors.map((e) => e.message).join('; '), codigo: 'VALIDACAO' });
+  }
+  if (process.env.NODE_ENV !== 'test') console.error('[erro interno]', err);
+  return res.status(500).json({ erro: 'Erro interno do servidor.', codigo: 'ERRO_INTERNO' });
 }
 
-module.exports = errorHandler;
+function naoEncontrado(req, res) {
+  res.status(404).json({ erro: `Rota não encontrada: ${req.method} ${req.originalUrl}`, codigo: 'ROTA_INEXISTENTE' });
+}
+
+module.exports = { errorHandler, naoEncontrado };

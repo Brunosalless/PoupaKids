@@ -61,6 +61,15 @@ npm run dev:web    # terminal 2: frontend em http://localhost:5173 (proxy /api �
 npm test           # testes automatizados do backend
 ```
 
+## Testar no Postman
+
+1. Rode a API: `npm run demo`
+2. No Postman: **Import** → arraste o arquivo `postman/PoupaKids.postman_collection.json`
+3. Execute as pastas na ordem (ou **Run collection**). Os logins salvam os tokens sozinhos.
+
+São 31 requisições cobrindo as 19 rotas. A pasta **7. Regras de negócio** mostra os erros esperados (401, 403, 404, 422).
+Para recomeçar com os dados originais: `npm run demo:reset`.
+
 ## Endpoints
 
 Todas as rotas, exceto `/health`, `/auth/registrar`, `/auth/login` e `/auth/login-crianca`, exigem `Authorization: Bearer <token>`.
